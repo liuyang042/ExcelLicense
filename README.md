@@ -2,19 +2,13 @@
 ## 检查有效期
 场景一：程序执行前检查（宏入口处）
 Sub MyProtectedMacro()
-'*******************************************************************************************************************************************************
     If Not CheckExpiration() Then Exit Sub
-'*******************************************************************************************************************************************************
     ' 此处放置你需要保护的业务代码
 End Sub
 
 场景二：点击工作表时检查（工作表事件）:代码（放在对应工作表的模块中，例如 Sheet1）
-
-'*******************************************************************************************************************************************************
-' ===========================================================================================
 ' Worksheet Activate Event with Protection
 ' Place this in the DATA sheet module
-' ===========================================================================================
 Private Sub Worksheet_Activate()
     ' Execute expiration verification first
     If Not CheckExpiration() Then
@@ -26,11 +20,9 @@ Private Sub Worksheet_Activate()
         Application.EnableEvents = True
         Exit Sub
     End If
-    
     ' Continue with normal activation if license valid
     Range("A2").Select
 End Sub
-'*******************************************************************************************************************************************************
 场景三：打开工作簿时检查（工作簿事件）'(放在 ThisWorkbook 模块中)
 在 ThisWorkbook 模块中使用 Workbook_Open 事件，打开文件时立即验证。如果过期，可以给出警告并强制关闭或限制功能。
 Private Sub Workbook_Open()
@@ -40,7 +32,8 @@ Private Sub Workbook_Open()
         ThisWorkbook.Close SaveChanges:=False
     End If
 End Sub
-'*******************************************************************************************************************************************************
+
+## 检查有效期代码
 Public Function CheckExpiration() As Boolean
     Dim githubLink As String
     Dim http As Object
@@ -67,7 +60,6 @@ Public Function CheckExpiration() As Boolean
     http.Send
     httpStatus = http.Status                 ' 即使 Send 失败，读取状态码的错误也会被忽略
     On Error GoTo 0
-    ' ===========================================================================================
     ' 检查状态：如果请求或网络出错，状态码不会是 200
     If httpStatus <> 200 Then
         MsgBox "Failed to verify version. Please contact author: Liu Yang Email: luckilyliuyang@163.com", vbCritical
